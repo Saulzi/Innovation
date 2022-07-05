@@ -10,7 +10,20 @@ namespace Innovation
     {
         public OrderStatus HandleOrder(RepairOrder order)
         {
-            return OrderStatus.Confirmed;
+
+            var result = order switch
+            {
+                { IsLargeOrder: true, IsNewCustomer: true } => OrderStatus.Closed,
+                { IsLargeOrder: true, IsRushOrder: true} => OrderStatus.Closed,
+                { IsLargeOrder: true, OrderType: OrderType.Repair} => OrderStatus.AuthorisationRequired,
+                { IsRushOrder: true } => OrderStatus.AuthorisationRequired,
+                _ => OrderStatus.Confirmed
+            };
+
+            return result;
+
+
+
         }
     }
 }
